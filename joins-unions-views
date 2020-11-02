@@ -1,0 +1,141 @@
+mysql> select *from staff;
+ERROR 1146 (42S02): Table 'mysql.staff' doesn't exist
+mysql> create table staff(id int,sname varchar(100),sage int(100),saddr varchar(100),sal int);
+Query OK, 0 rows affected, 1 warning (2.49 sec)
+
+mysql> insert into staff values('1','naveen','24','kadapa','24000');
+Query OK, 1 row affected (0.34 sec)
+
+mysql> insert into staff values('2','praveen','25','hyderabad','25000'),('3','makesh','27','bangalore','26000'),('4','sudhakar','30','chennai','30000');
+Query OK, 3 rows affected (0.15 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into staff values('5','varun','23','mumbai','25000');
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select *from staff;
++------+----------+------+-----------+-------+
+| id   | sname    | sage | saddr     | sal   |
++------+----------+------+-----------+-------+
+|    1 | naveen   |   24 | kadapa    | 24000 |
+|    2 | praveen  |   25 | hyderabad | 25000 |
+|    3 | makesh   |   27 | bangalore | 26000 |
+|    4 | sudhakar |   30 | chennai   | 30000 |
+|    5 | varun    |   23 | mumbai    | 25000 |
++------+----------+------+-----------+-------+
+5 rows in set (0.23 sec)
+
+mysql> create table staff(paymentid INT, date date,sid INT,amount INT);
+ERROR 1050 (42S01): Table 'staff' already exists
+mysql> create table payment(paymentid INT, date date,sid INT,amount INT);
+Query OK, 0 rows affected (1.98 sec)
+
+mysql> insert into payment values('101','30/4/2020','1','30000'),('3','24/2/2020','20000'),('4','22/4/2020','30000');
+ERROR 1136 (21S01): Column count doesn't match value count at row 2
+mysql> insert into payment values('101','30/4/2020','1','30000'),('102','24/2/2020','3','20000'),('103','22/4/2020','4''30000');
+ERROR 1136 (21S01): Column count doesn't match value count at row 3
+mysql> create table payment1(paymentid INT, date varchar(100),sid INT,amount INT);
+Query OK, 0 rows affected (2.08 sec)
+
+mysql> insert into payment1 values('101','30/4/2020','1','30000'),('102','24/2/2020','3','20000'),('103','22/4/2020','4''30000');
+ERROR 1136 (21S01): Column count doesn't match value count at row 3
+mysql> insert into payment1 values('101','30/4/2020','1','30000'),('102','24/2/2020','3','20000'),('103','22/4/2020','4','30000');
+Query OK, 3 rows affected (0.13 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT id,sname,sage,amount FROM staff s,payment1 p WHERE S.id=p.sid;
++------+----------+------+--------+
+| id   | sname    | sage | amount |
++------+----------+------+--------+
+|    1 | naveen   |   24 |  30000 |
+|    3 | makesh   |   27 |  20000 |
+|    4 | sudhakar |   30 |  30000 |
++------+----------+------+--------+
+
+mysql> SELECT id,sname,saddr,sal,date from staff LEFT JOIN payment1 ON staff.id=payment1.sid;
++------+----------+-----------+-------+-----------+
+| id   | sname    | saddr     | sal   | date      |
++------+----------+-----------+-------+-----------+
+|    1 | naveen   | kadapa    | 24000 | 30/4/2020 |
+|    2 | praveen  | hyderabad | 25000 | NULL      |
+|    3 | makesh   | bangalore | 26000 | 24/2/2020 |
+|    4 | sudhakar | chennai   | 30000 | 22/4/2020 |
+|    5 | varun    | mumbai    | 25000 | NULL      |
++------+----------+-----------+-------+-----------+
+
+mysql> select id,sname,amount,date
+    -> from staff RIGHT JOIN payment1 ON STAFF.ID=PAYMENT1.SID;
++------+----------+--------+-----------+
+| id   | sname    | amount | date      |
++------+----------+--------+-----------+
+|    1 | naveen   |  30000 | 30/4/2020 |
+|    3 | makesh   |  20000 | 24/2/2020 |
+|    4 | sudhakar |  30000 | 22/4/2020 |
++------+----------+--------+-----------+
+3 rows in set (0.11 sec)
+
+mysql> SELECT *FROM staff,payment1;
++------+----------+------+-----------+-------+-----------+-----------+------+--------+
+| id   | sname    | sage | saddr     | sal   | paymentid | date      | sid  | amount |
++------+----------+------+-----------+-------+-----------+-----------+------+--------+
+|    1 | naveen   |   24 | kadapa    | 24000 |       101 | 30/4/2020 |    1 |  30000 |
+|    1 | naveen   |   24 | kadapa    | 24000 |       102 | 24/2/2020 |    3 |  20000 |
+|    1 | naveen   |   24 | kadapa    | 24000 |       103 | 22/4/2020 |    4 |  30000 |
+|    2 | praveen  |   25 | hyderabad | 25000 |       101 | 30/4/2020 |    1 |  30000 |
+|    2 | praveen  |   25 | hyderabad | 25000 |       102 | 24/2/2020 |    3 |  20000 |
+|    2 | praveen  |   25 | hyderabad | 25000 |       103 | 22/4/2020 |    4 |  30000 |
+|    3 | makesh   |   27 | bangalore | 26000 |       101 | 30/4/2020 |    1 |  30000 |
+|    3 | makesh   |   27 | bangalore | 26000 |       102 | 24/2/2020 |    3 |  20000 |
+|    3 | makesh   |   27 | bangalore | 26000 |       103 | 22/4/2020 |    4 |  30000 |
+|    4 | sudhakar |   30 | chennai   | 30000 |       101 | 30/4/2020 |    1 |  30000 |
+|    4 | sudhakar |   30 | chennai   | 30000 |       102 | 24/2/2020 |    3 |  20000 |
+|    4 | sudhakar |   30 | chennai   | 30000 |       103 | 22/4/2020 |    4 |  30000 |
+|    5 | varun    |   23 | mumbai    | 25000 |       101 | 30/4/2020 |    1 |  30000 |
+|    5 | varun    |   23 | mumbai    | 25000 |       102 | 24/2/2020 |    3 |  20000 |
+|    5 | varun    |   23 | mumbai    | 25000 |       103 | 22/4/2020 |    4 |  30000 |
++------+----------+------+-----------+-------+-----------+-----------+------+--------+
+1
+
+mysql> SELECT id from staff
+    -> union
+    -> SELECT amount from payment1;
++-------+
+| id    |
++-------+
+|     1 |
+|     2 |
+|     3 |
+|     4 |
+|     5 |
+| 30000 |
+| 20000 |
++-------+
+7 rows in set (0.17 sec)
+
+mysql> SELECT id,sname,sage from staff
+    -> UNION ALL
+    -> SELECT paymentid,date,amount from payment1;
++------+-----------+-------+
+| id   | sname     | sage  |
++------+-----------+-------+
+|    1 | naveen    |    24 |
+|    2 | praveen   |    25 |
+|    3 | makesh    |    27 |
+|    4 | sudhakar  |    30 |
+|    5 | varun     |    23 |
+|  101 | 30/4/2020 | 30000 |
+|  102 | 24/2/2020 | 20000 |
+|  103 | 22/4/2020 | 30000 |
++------+-----------+-------+
+
+mysql> create view bang as select id,sname from staff where saddr='bangalore';
+Query OK, 0 rows affected (0.78 sec)
+
+mysql> SELECT * from bang;
++------+--------+
+| id   | sname  |
++------+--------+
+|    3 | makesh |
+|    6 | neevan |
+|    7 | john   |
++------+--------+
